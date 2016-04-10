@@ -10,9 +10,7 @@ with System;
 with Digamma;
 with Digamma.CSV;
 
-
-
-procedure Main_Test is
+procedure Main_Read is
 
    use Digamma;
    use Ada.Strings.Unbounded;
@@ -23,23 +21,25 @@ procedure Main_Test is
    use Ada.Streams;
    use Ada.Streams.Stream_IO;
 
-   X : CSV.Float_Array_2 (1 .. 3, 1 .. 4);
-   L : CSV.Line_Vector;
+   M : CSV.Float_Matrix (3, 4);
+
+   F : Stream_IO.File_Type;
+   S : Stream_Access;
 
 begin
 
-   CSV.Read_Append ("test.csv", L);
-   CSV.Append (L, ",", X);
+   Open (F, In_File, "test.advec");
+   S := Stream (F);
+   CSV.Float_Vector'Read (S, M.Data);
+   Close (F);
 
-   for I in X'Range (1) loop
-      for J in X'Range (2) loop
-         Put (X (I, J));
+   for I in 1 .. M.Row_Count loop
+      for J in 1 .. M.Column_Count loop
+         Put (CSV.Element (M, I, J));
          Put (" ");
       end loop;
       New_Line;
    end loop;
 
-
-   null;
 
 end;
